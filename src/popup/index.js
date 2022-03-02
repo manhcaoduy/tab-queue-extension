@@ -1,6 +1,4 @@
-import { move } from '../queuetab/queuetab';
-
-const isEnableKey = "isEnabled";
+import { moveTabToFirst } from '../queuetab/queuetab';
 
 let enableButton = document.getElementById("enable");
 
@@ -25,6 +23,11 @@ function getAllStorageSyncData() {
 
 // Where we will expose all the data we retrieve from storage.sync.
 const storageCache = {};
+
+function activatedListener(activeInfo) {
+	moveTabToFirst(activeInfo.tabId);
+}
+
 // Asynchronously retrieve data from storage.sync, then cache it.
 const initStorageCache = getAllStorageSyncData().then(items => {
     // Copy the data retrieved from storage into storageCache.
@@ -39,33 +42,37 @@ const initStorageCache = getAllStorageSyncData().then(items => {
         isEnable = storageCache.isEnableKey;
     }
 
+    console.log(`isEnabled is ${isEnable}`);
+
     if (isEnable === true) {
-        chrome.tabs.onActivated.addListener(activeInfo => move(activeInfo));
+        chrome.tabs.onActivated.addListener(activatedListener);
         enableButton.checked = true;
     } else {
         enableButton.checked = false;
     }
 });
 
-chrome.action.onClicked.addListener(async(tab) => {
+async function init() {
     try {
         await initStorageCache;
-    } catch (e) {
+
+        enableButton.addEventListener('change', e => {
+            if (e.target.checked) {
+                chrome.storage.sync.set({ isEnableKey: true }, function() {
+                    console.log("Enable!");
+                });
+                chrome.tabs.onActivated.addListener(activatedListener);
+            } else {
+                chrome.storage.sync.set({ isEnableKey: false }, function() {
+                    console.log("Disable!");
+                });
+                chrome.tabs.onActivated.removeListener(activatedListener);
+            }
+        });
+    }  catch (e) {
         // Handle error that occurred during storage initialization.
         console.log(`error when init storage cache: ${e}`);
     }
-});
+}
 
-enableButton.addEventListener('change', e => {
-    if (e.target.checked) {
-        chrome.storage.sync.set({ isEnableKey: true }, function() {
-            console.log("Enable!");
-        });
-        chrome.tabs.onActivated.addListener(activeInfo => move(activeInfo));
-    } else {
-        chrome.storage.sync.set({ isEnableKey: false }, function() {
-            console.log("Disable!");
-        });
-        // chrome.tabs.onActivated.removeListener();
-    }
-});
+init()
