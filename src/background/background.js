@@ -1,17 +1,14 @@
-import {getEnabledKey} from '../lib/getStorage';
+import {getEnabledKey} from "../lib/getStorage";
+import {activatedListener} from "../lib/queuetab";
 
-let enableButton = document.getElementById("enable");
-
-async function init() {
+async function initEnabledStatus() {
     try {
         let isEnable = false
         getEnabledKey().then(value => {
             isEnable = value;
         })
         if (isEnable === true) {
-            enableButton.checked = true;
-        } else {
-            enableButton.checked = false;
+            chrome.tabs.onActivated.addListener(activatedListener);
         }
     }  catch (e) {
         // Handle error that occurred during storage initialization.
@@ -19,4 +16,4 @@ async function init() {
     }
 }
 
-init()
+initEnabledStatus()

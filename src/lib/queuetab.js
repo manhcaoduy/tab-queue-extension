@@ -1,4 +1,4 @@
-export async function moveTabToFirst(tabId) {
+async function moveTabToFirst(tabId) {
     try {
         await chrome.tabs.move(tabId, { index: 0 });
         console.log(`Success move tabId ${tabId}`);
@@ -7,4 +7,12 @@ export async function moveTabToFirst(tabId) {
             setTimeout(() => move(tabId), 50);
         }
     }
+}
+
+async function activatedListener(activeInfo) {
+    await moveTabToFirst(activeInfo.tabId);
+}
+
+module.exports = {
+    activatedListener,
 }
