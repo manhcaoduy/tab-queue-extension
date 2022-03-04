@@ -1,7 +1,6 @@
 module.exports = {
     entry: {
-        popup: './src/popup/index.js',
-        background: './src/background/background.js',
+        popup: ['./src/popup/index.js'],
     },
     output: {
         filename: '[name].js',
