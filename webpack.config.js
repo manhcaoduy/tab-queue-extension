@@ -1,6 +1,6 @@
 module.exports = {
     entry: {
-        popup: './src/popup/index.js',
+        popup: ['./src/popup/index.js'],
     },
     output: {
         filename: '[name].js',

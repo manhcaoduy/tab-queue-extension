@@ -1,14 +1,17 @@
 {
-    "name": "Tab Queue Extension",
-    "description": "An extension that sort the tab according to the queue sorting",
-    "version": "1.0",
-    "manifest_version": 3,
-    "permissions": [
-        "storage",
-        "debugger",
-        "tabs"
-    ],
-    "action": {
-        "default_popup": "dist/index.html"
-    }
+  "name": "Tab Queue Extension",
+  "description": "An extension that sort the tab according to the queue sorting",
+  "version": "1.0",
+  "manifest_version": 3,
+  "permissions": [
+    "storage",
+    "debugger",
+    "tabs"
+  ],
+  "action": {
+    "default_popup": "dist/index.html"
+  },
+  "background": {
+    "service_worker": "src/background/background.js"
+  }
 }
